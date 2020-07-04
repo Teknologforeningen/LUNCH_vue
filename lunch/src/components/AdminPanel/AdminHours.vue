@@ -15,6 +15,7 @@
 					max-rows="6"
 				></b-form-textarea>
 			</b-form-group>
+			<b-button :disabled="oldtext == text" class="add-button" variant="primary" @click="showUpdateModal()">Update hours</b-button>
 		</b-form>
 	</div>
 </template>
@@ -29,19 +30,40 @@
 		},
 		data() {
 			return {
+				oldtext: '',
 				text: ''
 			}
 		},
 		async created() {
 			try {
 				const tmp = await RequestService.getRequest('hours');
-				this.text = tmp[0].hours
+				this.text = tmp[0].hours;
+				this.oldtext = this.text;
 			} catch(err) {
 				console.log(err);
 			}
     },
     methods: {
-
+			async showUpdateModal() {
+				this.$bvModal.msgBoxConfirm('Are you sure?')
+          .then(value => {
+            if (value) {
+							this.updateHours();
+							this.oldtext = this.text;
+						}
+          })
+          .catch(err => {
+            console.log(err);
+          })
+			},
+			async updateHours() {
+				try {
+					const text = JSON.stringify(this.text);
+					await RequestService.sendRequest('hours', text);
+				} catch (err) {
+					console.log(err);
+				}
+			}
     }
   }
 </script>
@@ -51,5 +73,9 @@
 		text-align: left;
 		min-width: 600px;
 		margin-bottom: 16px;
+	}
+
+	.add-button {
+		margin-top: 16px;
 	}
 </style>
