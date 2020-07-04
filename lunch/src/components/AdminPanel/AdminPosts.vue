@@ -4,7 +4,7 @@
 		<b-list-group v-bind:key="item.id" v-for="item in newsArr">
 			<b-list-group-item>
         {{item.title}}
-        <b-icon-trash class="float-right" icon="trash" @click="deletePost(item._id)"></b-icon-trash>
+        <b-icon-trash class="float-right" icon="trash" @click="showDeleteModal(item._id)"></b-icon-trash>
       </b-list-group-item>
 		</b-list-group>
 		<b-button class="add-button" variant="primary" @click="openModal">Add post</b-button>
@@ -64,13 +64,38 @@
     async created() {
 			try {
 				this.newsArr = await RequestService.getRequest('posts');
-				
+				this.newsArr.sort((a, b) => b.date - a.date)
 				console.log(this.newsArr)
 			} catch(err) {
 				console.log(err);
 			}
     },
     methods: {
+			async onSubmit(evt) {
+				evt.preventDefault()
+				try {
+					const text = JSON.stringify(this.form);
+					await RequestService.sendRequest('posts', text);
+					this.newsArr = await RequestService.getRequest('posts');
+					this.newsArr.sort((a, b) => b.date - a.date)
+				} catch (err) {
+					console.log(err);
+				}
+				this.closeModal();
+			},
+
+			showDeleteModal(id) {
+				this.$bvModal.msgBoxConfirm('Are you sure?')
+          .then(value => {
+            if (value) {
+							this.deletePost(id);
+						}
+          })
+          .catch(err => {
+            console.log(err);
+          })
+			},
+
 			deletePost(id) {
       RequestService.deleteRequest("posts", id)
         .then(() => {
@@ -79,17 +104,6 @@
         .catch(error => {
           console.log(error.response);
 				});
-			},
-			async onSubmit(evt) {
-				evt.preventDefault()
-				try {
-					const text = JSON.stringify(this.form);
-					await RequestService.sendRequest('posts', text);
-					this.newsArr = await RequestService.getRequest('posts');
-				} catch (err) {
-					console.log(err);
-				}
-				this.closeModal();
 			},
 
 			openModal() {
