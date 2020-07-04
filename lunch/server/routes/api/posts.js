@@ -17,9 +17,10 @@ router.get('/', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+    const post = JSON.parse(req.body.text);
     const newPost = new Post({
-        title: req.body.title,
-        content: req.body.content
+        title: post.title,
+        content: post.content
     });
     
     newPost.save(err => {
