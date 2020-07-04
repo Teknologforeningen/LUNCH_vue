@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('./models/User');
 const Post = require('./models/Post');
+const Hours = require('./models/Hours');
 const bcrypt = require('bcrypt');
 
 mongoose.connect('mongodb://localhost/lunch');
@@ -35,5 +36,17 @@ newPost.save(err => {
         console.log('Could not save post');
     } else {
         console.log('Post saved successfully');
+    }
+});
+
+const newHours = new Hours({
+    hours: 'Mon - Fri	10:30 - 15:00'
+});
+
+newHours.save(err => {
+    if (err) {
+        console.log('Could not save hours');
+    } else {
+        console.log('Hours saved successfully');
     }
 });

@@ -122,6 +122,7 @@
 	.admin-post-container {
 		text-align: left;
 		min-width: 600px;
+		margin-bottom: 16px;
 	}
 
 	.add-button {
