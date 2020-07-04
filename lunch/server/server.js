@@ -53,8 +53,10 @@ app.post('/login', (req, res, next) => {
 });
 
 const posts = require('./routes/api/posts');
+const hours = require('./routes/api/hours');
 
 app.use('/api/posts', posts);
+app.use('/api/hours', hours);
 
 const port = process.env.PORT || 5000;
 
