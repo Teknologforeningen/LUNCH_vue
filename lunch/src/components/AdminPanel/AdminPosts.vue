@@ -52,7 +52,7 @@
 	import { BIconTrash, BIconEye, BIconEyeFill } from "bootstrap-vue";
 
   export default {
-    name: 'AdminPanel',
+    name: 'AdminPosts',
     components: {
         BIconTrash, BIconEye, BIconEyeFill
 		},
@@ -81,7 +81,7 @@
 					const text = JSON.stringify(this.form);
 					await RequestService.sendRequest('posts', text);
 					this.newsArr = await RequestService.getRequest('posts');
-					this.newsArr.sort((a, b) => b.date - a.date)
+					this.newsArr.sort((a, b) => b.date - a.date);
 				} catch (err) {
 					console.log(err);
 				}

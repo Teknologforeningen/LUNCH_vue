@@ -9,7 +9,7 @@
 
 <script>
 import Article from './Article';
-import RequetsService from '../RequestService'
+import RequestService from '../RequestService'
 
 export default {
     name: "NewsList",
@@ -23,7 +23,7 @@ export default {
     },
     async created() {
         try {
-            this.newsArr = await RequetsService.getRequest('posts');
+            this.newsArr = await RequestService.getRequest('posts');
             this.newsArr.sort((a, b) => b.date - a.date)
             console.log(this.newsArr)
         } catch(err) {

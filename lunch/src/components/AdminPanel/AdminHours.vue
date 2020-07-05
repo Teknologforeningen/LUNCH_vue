@@ -24,7 +24,7 @@
 	import RequestService from '../../RequestService';
 
   export default {
-    name: 'AdminPanel',
+    name: 'AdminHours',
     components: {
         
 		},

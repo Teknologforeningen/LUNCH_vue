@@ -24,7 +24,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-app.post('/login', (req, res, next) => {
+app.post('/login', (req, res) => {
     User.findOne({ username: req.body.username }, (err, user) => {
         if (err) {
             return res.status(500).json({
@@ -54,9 +54,11 @@ app.post('/login', (req, res, next) => {
 
 const posts = require('./routes/api/posts');
 const hours = require('./routes/api/hours');
+const prices = require('./routes/api/prices');
 
 app.use('/api/posts', posts);
 app.use('/api/hours', hours);
+app.use('/api/prices', prices);
 
 const port = process.env.PORT || 5000;
 
