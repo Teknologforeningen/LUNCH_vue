@@ -4,7 +4,11 @@
 		<b-list-group v-bind:key="item.id" v-for="item in newsArr">
 			<b-list-group-item>
         {{item.title}}
-        <b-icon-trash class="float-right" icon="trash" @click="showDeleteModal(item._id)"></b-icon-trash>
+				<div class="float-right">
+					<b-icon-eye v-if="!item.visible" class="item-icon" icon="eye" @click="showItem(item)"></b-icon-eye>
+					<b-icon-eye-fill v-if="item.visible" class="item-icon" icon="eye-fill" @click="hideItem(item)"></b-icon-eye-fill>
+					<b-icon-trash class="icon-delete" icon="trash" @click="showDeleteModal(item._id)"></b-icon-trash>
+				</div>
       </b-list-group-item>
 		</b-list-group>
 		<b-button class="add-button" variant="primary" @click="openModal">Add post</b-button>
@@ -45,12 +49,12 @@
 
 <script>
 	import RequestService from '../../RequestService';
-	import { BIconTrash } from "bootstrap-vue";
+	import { BIconTrash, BIconEye, BIconEyeFill } from "bootstrap-vue";
 
   export default {
     name: 'AdminPanel',
     components: {
-        BIconTrash
+        BIconTrash, BIconEye, BIconEyeFill
 		},
 		data() {
 			return {
@@ -65,7 +69,7 @@
 			try {
 				this.newsArr = await RequestService.getRequest('posts');
 				this.newsArr.sort((a, b) => b.date - a.date)
-				console.log(this.newsArr)
+				//console.log(this.newsArr)
 			} catch(err) {
 				console.log(err);
 			}
@@ -106,6 +110,28 @@
 				});
 			},
 
+			async hideItem(item) {
+				item.visible = false;
+				const text = JSON.stringify(item);
+				await RequestService.sendRequest('posts', text);
+				this.newsArr.map(items => {
+					if (items._id == item._id) {
+						items.visible = item.visible;
+					}
+				})
+			},
+
+			async showItem(item) {
+				item.visible = true;
+				const text = JSON.stringify(item);
+				await RequestService.sendRequest('posts', text);
+				this.newsArr.map(items => {
+					if (items._id == item._id) {
+						items.visible = item.visible;
+					}
+				})
+			},
+
 			openModal() {
 				this.$root.$emit('bv::show::modal', 'add-modal');
 			},
@@ -128,4 +154,22 @@
 	.add-button {
 		margin-top: 16px;
 	}
+
+	.item-icon {
+		margin: 0 8px;
+		cursor: pointer;
+	}
+
+	.item-icon:hover {
+		color: #007bff;
+	}
+
+	.icon-delete {
+		cursor: pointer;
+	}
+
+	.icon-delete:hover {
+		color: #dc3545;
+	}
+	
 </style>
