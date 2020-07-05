@@ -24,6 +24,7 @@ export default {
     async created() {
         try {
             this.newsArr = await RequetsService.getRequest('posts');
+            this.newsArr.sort((a, b) => b.date - a.date)
             console.log(this.newsArr)
         } catch(err) {
             console.log(err);

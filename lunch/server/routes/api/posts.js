@@ -18,21 +18,37 @@ router.get('/', (req, res) => {
 
 router.post('/', (req, res) => {
     const post = JSON.parse(req.body.text);
-    const newPost = new Post({
-        title: post.title,
-        content: post.content
-    });
-    
-    newPost.save(err => {
+    Post.findOne({ _id:post._id }, (err, result) => {
         if (err) {
             return res.status(500).json({
                 title: 'server error',
                 error: err
             });
+        } else if (result) {
+            console.log("exists");
+            result.title = post.title;
+            result.content = post.content;
+            result.visible = post.visible;
+            result.save();
         } else {
-            res.status(201).send();
+            console.log("does not exist")
+            const newPost = new Post({
+                title: post.title,
+                content: post.content
+            });
+            
+            newPost.save(err => {
+                if (err) {
+                    return res.status(500).json({
+                        title: 'server error',
+                        error: err
+                    });
+                } else {
+                    res.status(201).send();
+                }
+            });
         }
-    });
+    });    
 });
 
 router.delete('/:id', (req, res) => {

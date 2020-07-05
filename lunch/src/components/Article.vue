@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<b-card :title="article.title" img-src="https://picsum.photos/600/300/?image=25" img-alt="Image" img-top
-			tag="article" style="max-width: 20rem;" class="mb-2">
+			tag="article" class="mb-2 article-card">
 			<b-card-text>
 				{{article.content}}
 			</b-card-text>
@@ -17,4 +17,8 @@ export default {
 </script>
 
 <style scope>
+	.article-card {
+		max-width: 30rem;
+		text-align: left;
+	}
 </style>
