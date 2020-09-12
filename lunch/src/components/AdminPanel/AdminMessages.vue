@@ -1,6 +1,6 @@
 <template>
 	<div class="admin-post-container">
-		<h2>Opening hours:</h2>
+		<h2>Short Messages:</h2>
 		<b-form>
 			<b-form-group
 				id="hours-group"
@@ -10,12 +10,12 @@
 				<b-form-textarea
 					id="hours-textarea"
 					v-model="text"
-					placeholder="Add opening hours"
+					placeholder="Add short message"
 					rows="4"
 					max-rows="6"
 				></b-form-textarea>
 			</b-form-group>
-			<b-button :disabled="oldtext == text" class="add-button" variant="primary" @click="showUpdateModal()">Update hours</b-button>
+			<b-button :disabled="oldtext == text" class="add-button" variant="primary" @click="showUpdateModal()">Update message</b-button>
 		</b-form>
 	</div>
 </template>
@@ -24,7 +24,7 @@
 	import RequestService from '../../RequestService';
 
   export default {
-    name: 'AdminHours',
+    name: 'AdminMessages',
     components: {
         
 		},
@@ -36,8 +36,9 @@
 		},
 		async created() {
 			try {
-				const tmp = await RequestService.getRequest('hours');
-				this.text = tmp[0].hours;
+                const tmp = await RequestService.getRequest('messages');
+                console.log(tmp)
+				this.text = tmp[0].message;
 				this.oldtext = this.text;
 			} catch(err) {
 				console.log(err);
@@ -48,9 +49,9 @@
 				this.$bvModal.msgBoxConfirm('Are you sure?')
           .then(value => {
             if (value) {
-				this.updateHours();
-				this.oldtext = this.text;
-			}
+                this.updateHours();
+                this.oldtext = this.text;
+            }
           })
           .catch(err => {
             console.log(err);
@@ -59,7 +60,7 @@
 			async updateHours() {
 				try {
 					const text = JSON.stringify(this.text);
-					await RequestService.sendRequest('hours', text);
+					await RequestService.sendRequest('messages', text);
 				} catch (err) {
 					console.log(err);
 				}

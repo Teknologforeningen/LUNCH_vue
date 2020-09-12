@@ -36,9 +36,7 @@ export default {
 			}
 			axios.post('http://localhost:5000/login', user)
 				.then(res => {
-					console.log(res);
 					localStorage.setItem('token', res.data.token);
-					this.$router.go();
 				}).catch(error => {
 					console.log(error.response);
 				});
