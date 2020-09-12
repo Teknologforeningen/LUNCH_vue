@@ -3,6 +3,7 @@ const User = require('./models/User');
 const Post = require('./models/Post');
 const Hours = require('./models/Hours');
 const Price = require('./models/Price');
+const Message = require('./models/Message');
 const bcrypt = require('bcrypt');
 
 mongoose.connect('mongodb://localhost/lunch');
@@ -66,3 +67,14 @@ newPrice.save(err => {
     }
 });
 
+const newMessage = new Message({
+    message: 'This friday we will have a barbeque party!'
+});
+
+newMessage.save(err => {
+    if (err) {
+        console.log('Could not save message');
+    } else {
+        console.log('Message saved successfully');
+    }
+});

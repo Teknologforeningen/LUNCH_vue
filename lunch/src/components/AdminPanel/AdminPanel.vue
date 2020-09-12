@@ -1,6 +1,7 @@
 <template>
 	<div>
     <AdminPosts />
+    <AdminMessages />
 		<AdminHours />
     <AdminPrices />
 	</div>
@@ -10,11 +11,12 @@
 	import AdminPosts from './AdminPosts';
   import AdminHours from './AdminHours';
   import AdminPrices from './AdminPrices';
+  import AdminMessages from './AdminMessages';
 
   export default {
     name: 'AdminPanel',
     components: {
-        AdminPosts, AdminHours, AdminPrices
+        AdminPosts, AdminHours, AdminPrices, AdminMessages
     },
     methods: {
 
