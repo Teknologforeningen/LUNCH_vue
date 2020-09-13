@@ -58,6 +58,19 @@ class RequestService {
     static deleteRequest(endPoint, id) {
         return axios.delete(`${url}${endPoint}/${id}`);
     }
+
+    static getMenuToday() {
+        return new Promise ((resolve,reject) => {
+            axios.get(url + 'menu/today').then((res) => {
+                const data = res.data;
+                // console.log(data);
+                resolve(data);
+            })
+            .catch((err)=> {
+                reject(err);
+            });
+        });
+    }
 }
 
 export default RequestService;

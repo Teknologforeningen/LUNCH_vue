@@ -5,6 +5,7 @@
     </div>
     <div class="app-content">
       <h1>Testing</h1>
+      <LunchMenu />
       <OpeningHours />
       <NewsList />
     </div>
@@ -15,11 +16,12 @@
 <script>
 import NewsList from '../components/NewsList'
 import OpeningHours from '../components/OpeningHours'
+import LunchMenu from '../components/LunchMenu'
 
 export default {
   name: 'App',
   components: {
-    NewsList, OpeningHours
+    LunchMenu, NewsList, OpeningHours
   }
 }
 </script>
