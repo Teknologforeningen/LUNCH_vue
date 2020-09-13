@@ -1,0 +1,12 @@
+.admin-post-container {
+    text-align: left;
+    min-width: 600px;
+    padding: 0 1rem;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 665px){
+    .admin-post-container {
+        min-width: unset;
+    }
+}
