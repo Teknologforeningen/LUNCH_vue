@@ -30,7 +30,6 @@ export default {
 	}
 
 	.article-card {
-		width: 478px;
 		text-align: left;
 	}
 

@@ -1,7 +1,9 @@
 <template>
-    <div class="hours-container">
-        <h2 class="component-title">Opening hours:</h2>
-        <pre class="hours-text">{{hours}}</pre>
+    <div class="component-container">
+        <h2 class="component-title">Opening hours</h2>
+		<div class="component-content">
+			<pre class="hours-text">{{hours}}</pre>
+		</div>
     </div>
 </template>
 
@@ -29,12 +31,6 @@ export default {
 </script>
 
 <style scope>
-    .hours-container {
-        max-width: 500px;
-		margin: 0 auto;
-		padding: 1rem 0;
-	}
-
 	.hours-text {
 		text-align: left;
 		margin: 8px 0;
