@@ -1,6 +1,6 @@
 <template>
     <div class="news-container">
-        <h2>News Feed</h2>
+        <h2 class="component-title">News Feed</h2>
         <div v-bind:key="item.id" v-for="item in newsArr">
             <Article v-if="item.visible" v-bind:article="item" />
         </div>
@@ -38,5 +38,6 @@ export default {
         display: flex;
         flex-direction: column;
         align-items: center;
+        padding: 1rem 0;
     }
 </style>

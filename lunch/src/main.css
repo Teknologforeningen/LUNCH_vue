@@ -10,6 +10,10 @@ html, body {
     margin-bottom: 16px;
 }
 
+.component-title {
+    margin-bottom: 1rem;
+}
+
 @media (max-width: 665px){
     .admin-post-container {
         min-width: unset;

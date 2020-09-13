@@ -73,7 +73,6 @@ export default {
   display: flex;
   background-color: #f24844;
   box-shadow: 0px 1px 10px #999;
-  flex: 1;
   z-index: 1;
 
   a {

@@ -4,12 +4,13 @@
       <div class="left-image-container"></div>
     </div>
     <div class="app-content">
-      <h1>Testing</h1>
       <LunchMenu />
       <OpeningHours />
       <NewsList />
     </div>
     <div class="app-content-right"></div>
+    <div class="footer">
+    </div>
   </div>
 </template>
 
@@ -33,6 +34,10 @@ export default {
     flex-wrap: wrap;
   }
 
+  .app-content {
+    padding: 2rem 0;
+  }
+
   .app-content-left {
     flex: 1;
     display: flex;
@@ -50,6 +55,12 @@ export default {
     flex: 1;
   }
 
+  .footer {
+    width: 100%;
+    min-height: 200px;
+    background-color: #F4F4F4;
+  }
+
   @media (max-width: 1085px) {
     .app-content-right,
     .app-content-left  {
@@ -57,6 +68,10 @@ export default {
     }
     .app-content-conatiner {
       justify-content: center;
+    }
+    .app-content {
+      padding: 2rem 1rem;
+      width: 100%;
     }
   }
 
