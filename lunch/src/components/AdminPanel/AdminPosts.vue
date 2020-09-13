@@ -41,6 +41,8 @@
 						max-rows="6"
 					></b-form-textarea>
 				</b-form-group>
+				<div class="mt-3">Select file: <span class="image-input-error">{{message}}</span></div>
+				<b-form-file v-model="form.image" class="mt-3 file-input" plain></b-form-file>
 				<b-button type="submit" variant="success">Add</b-button>
 			</b-form>
 		</b-modal>
@@ -55,16 +57,18 @@
     name: 'AdminPosts',
     components: {
         BIconTrash, BIconEye, BIconEyeFill
-		},
-		data() {
-			return {
-				newsArr: [],
-				form: {
-					title: '',
-					content: ''
-				}
-			}
-		},
+	},
+	data() {
+		return {
+			newsArr: [],
+			form: {
+				title: '',
+				content: '',
+				image: null
+			},
+			message: ''
+		}
+	},
     async created() {
 			try {
 				this.newsArr = await RequestService.getRequest('posts');
@@ -75,71 +79,90 @@
 			}
     },
     methods: {
-			async onSubmit(evt) {
-				evt.preventDefault()
+		async onSubmit(evt) {
+			evt.preventDefault();
+			if (this.validateImage()) {
 				try {
-					const text = JSON.stringify(this.form);
-					await RequestService.sendRequest('posts', text);
+					const formData  = new FormData();
+					formData.append("title", this.form.title);
+					formData.append("content", this.form.content);
+					formData.append("image", this.form.image);
+					await RequestService.sendDataRequest('posts', formData);
 					this.newsArr = await RequestService.getRequest('posts');
 					this.newsArr.sort((a, b) => b.date - a.date);
 				} catch (err) {
 					console.log(err);
 				}
 				this.closeModal();
-			},
-
-			showDeleteModal(id) {
-				this.$bvModal.msgBoxConfirm('Are you sure?')
-          .then(value => {
-            if (value) {
-							this.deletePost(id);
-						}
-          })
-          .catch(err => {
-            console.log(err);
-          })
-			},
-
-			deletePost(id) {
-      RequestService.deleteRequest("posts", id)
-        .then(() => {
-          this.newsArr = this.newsArr.filter(item => item._id !== id);
-        })
-        .catch(error => {
-          console.log(error.response);
-				});
-			},
-
-			async hideItem(item) {
-				item.visible = false;
-				const text = JSON.stringify(item);
-				await RequestService.sendRequest('posts', text);
-				this.newsArr.map(items => {
-					if (items._id == item._id) {
-						items.visible = item.visible;
-					}
-				})
-			},
-
-			async showItem(item) {
-				item.visible = true;
-				const text = JSON.stringify(item);
-				await RequestService.sendRequest('posts', text);
-				this.newsArr.map(items => {
-					if (items._id == item._id) {
-						items.visible = item.visible;
-					}
-				})
-			},
-
-			openModal() {
-				this.$root.$emit('bv::show::modal', 'add-modal');
-			},
-
-			closeModal() {
-				this.$root.$emit('bv::hide::modal', 'add-modal');
-				this.form = {title: '', content: ''};
 			}
+		},
+
+		showDeleteModal(id) {
+			this.$bvModal.msgBoxConfirm('Are you sure?')
+			.then(value => {
+			if (value) {
+					this.deletePost(id);
+				}
+			})
+			.catch(err => {
+				console.log(err);
+			})
+		},
+
+		deletePost(id) {
+			RequestService.deleteRequest("posts", id)
+			.then(() => {
+				this.newsArr = this.newsArr.filter(item => item._id !== id);
+			})
+			.catch(error => {
+				console.log(error.response);
+			});
+		},
+
+		validateImage() {
+			const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+			const file = this.form.image;
+			if(!allowedTypes.includes(file.type)) {
+				this.message = "Only images are aloud !!";
+				return false;
+			} else if(file.size > 5000000) {
+				this.message = "File size exceedes 5MB limit !!";
+				return false;
+			} else {
+				return true;
+			}
+		},
+
+		async hideItem(item) {
+			item.visible = false;
+			const text = JSON.stringify(item);
+			await RequestService.sendRequest('posts', text);
+			this.newsArr.map(items => {
+				if (items._id == item._id) {
+					items.visible = item.visible;
+				}
+			})
+		},
+
+		async showItem(item) {
+			item.visible = true;
+			const text = JSON.stringify(item);
+			await RequestService.sendRequest('posts', text);
+			this.newsArr.map(items => {
+				if (items._id == item._id) {
+					items.visible = item.visible;
+				}
+			})
+		},
+
+		openModal() {
+			this.$root.$emit('bv::show::modal', 'add-modal');
+		},
+
+		closeModal() {
+			this.$root.$emit('bv::hide::modal', 'add-modal');
+			this.form = {title: '', content: '', image: null};
+		}
     }
   }
 </script>
@@ -170,6 +193,14 @@
 
 	.icon-delete:hover {
 		color: #dc3545;
+	}
+
+	.image-input-error {
+		color: #dc3545;
+	}
+
+	.file-input {
+		margin-bottom: 2rem;
 	}
 	
 </style>

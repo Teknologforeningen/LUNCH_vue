@@ -4,6 +4,8 @@ const Schema = mongoose.Schema;
 const postSchema = new Schema({
     title: String,
     content: String,
+    contentType: String,
+    image: Buffer,
     date: {type: Number, default: Date.now},
     visible: {type: Boolean, default: true}
 });
