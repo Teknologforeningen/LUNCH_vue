@@ -1,7 +1,7 @@
 <template>
-	<div class="menu-container">
+	<div class="component-container">
         <h2 class="component-title">Menu</h2>
-		<div class="lunch-menu-container">
+		<div class="lunch-menu-container component-content">
             <pre v-if="today">{{ menu }}</pre>
             <div v-if="!today" v-html="menu"></div>
         </div>
@@ -41,11 +41,6 @@ export default {
 </script>
 
 <style scope>
-    .menu-container {
-        max-width: 500px;
-		margin: 0 auto;
-    }
-
     .lunch-menu-container {
         text-align: left;
     }

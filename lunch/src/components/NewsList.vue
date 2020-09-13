@@ -1,5 +1,5 @@
 <template>
-    <div class="news-container">
+    <div class="component-container">
         <h2 class="component-title">News Feed</h2>
         <div v-bind:key="item.id" v-for="item in newsArr">
             <Article v-if="item.visible" v-bind:article="item" />

@@ -10,6 +10,18 @@ html, body {
     margin-bottom: 16px;
 }
 
+.component-container {
+    max-width: 580px;
+    margin: 1.5rem auto;
+    padding: 1rem;
+    box-shadow: -1px 2px 4px 4px #F4F4F4;
+}
+
+/* .component-content {
+    padding: 1rem;
+    box-shadow: -1px 2px 4px 4px #F4F4F4;
+} */
+
 .component-title {
     margin-bottom: 1rem;
 }
@@ -17,5 +29,9 @@ html, body {
 @media (max-width: 665px){
     .admin-post-container {
         min-width: unset;
+    }
+
+    .component-container {
+        width: 100%;
     }
 }
