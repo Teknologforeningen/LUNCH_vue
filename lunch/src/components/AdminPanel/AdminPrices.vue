@@ -133,12 +133,6 @@
 </script>
     
 <style scoped>
-	.admin-post-container {
-		text-align: left;
-		min-width: 600px;
-		margin-bottom: 16px;
-	}
-
 	.add-button {
 		margin-top: 16px;
 	}
@@ -150,5 +144,5 @@
 	.icon-delete:hover {
 		color: #dc3545;
 	}
-	
-	</style>
+
+</style>
