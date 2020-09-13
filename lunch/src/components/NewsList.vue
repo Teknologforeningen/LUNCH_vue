@@ -23,7 +23,7 @@ export default {
     },
     async created() {
         try {
-            this.newsArr = await RequestService.getRequest('posts');
+            this.newsArr = await RequestService.getDataRequest('posts');
             this.newsArr.sort((a, b) => b.date - a.date)
             console.log(this.newsArr)
         } catch(err) {

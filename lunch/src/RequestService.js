@@ -3,6 +3,10 @@ import axios from 'axios';
 const url = 'http://localhost:5000/api/';
 
 class RequestService {
+    static getUrl() {
+        return url;
+    }
+
     static getRequest(endPoint) {
         return new Promise ((resolve,reject) => {
             axios.get(url + endPoint).then((res) => {
@@ -18,6 +22,36 @@ class RequestService {
     static sendRequest(endPoint, text) {
         return axios.post(url + endPoint, {
             text
+        });
+    }
+
+    static getDataRequest(endPoint) {
+        return new Promise ((resolve,reject) => {
+            axios.get(url + endPoint).then((res) => {
+                const data = res.data;
+                console.log(data);
+                resolve(data);
+            })
+            .catch((err)=> {
+                reject(err);
+            });
+        });
+    }
+
+    static sendDataRequest(endPoint, text) {
+        return axios({
+            method: 'post',
+            url: url + endPoint,
+            data: text,
+            headers: {'Content-Type': 'multipart/form-data' }
+        })
+        .then(function (response) {
+            //handle success
+            console.log(response);
+        })
+        .catch(function (response) {
+            //handle error
+            console.log(response);
         });
     }
 
