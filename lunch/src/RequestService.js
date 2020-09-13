@@ -71,6 +71,19 @@ class RequestService {
             });
         });
     }
+
+    static getMenuWeek() {
+        return new Promise ((resolve,reject) => {
+            axios.get(url + 'menu/week').then((res) => {
+                const data = res.data;
+                // console.log(data);
+                resolve(data);
+            })
+            .catch((err)=> {
+                reject(err);
+            });
+        });
+    }
 }
 
 export default RequestService;

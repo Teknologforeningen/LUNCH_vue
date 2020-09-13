@@ -23,8 +23,20 @@ export default {
 </script>
 
 <style scope>
+	img {
+		max-height: 200px;
+		object-fit: cover;
+		
+	}
+
 	.article-card {
-		max-width: 30rem;
+		width: 478px;
 		text-align: left;
+	}
+
+	@media (max-width: 520px) {
+		.article-card {
+			width: 100%;
+		}
 	}
 </style>

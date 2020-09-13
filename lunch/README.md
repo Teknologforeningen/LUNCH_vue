@@ -24,4 +24,5 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ### Color scheme
-Primary red: #f24844;
+Primary red: #F24844;
+Secondary grey: #F4F4F4

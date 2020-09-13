@@ -1,6 +1,6 @@
 <template>
   <div class="admin-page-container">
-    <h1>This is the admin page</h1>
+    <h1>Admin page</h1>
     <Login v-if="!isAuthenticated()" />
     <AdminPanel v-if="isAuthenticated()" />
   </div>
@@ -29,5 +29,6 @@
     flex-direction: column;
     align-items: center;
     overflow: auto;
+    padding: 2rem 1rem;
   }
 </style>
