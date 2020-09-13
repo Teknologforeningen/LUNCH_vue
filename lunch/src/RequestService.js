@@ -29,7 +29,7 @@ class RequestService {
         return new Promise ((resolve,reject) => {
             axios.get(url + endPoint).then((res) => {
                 const data = res.data;
-                console.log(data);
+                // console.log(data);
                 resolve(data);
             })
             .catch((err)=> {
@@ -44,15 +44,15 @@ class RequestService {
             url: url + endPoint,
             data: text,
             headers: {'Content-Type': 'multipart/form-data' }
-        })
-        .then(function (response) {
-            //handle success
-            console.log(response);
-        })
-        .catch(function (response) {
-            //handle error
-            console.log(response);
         });
+        // .then(function (response) {
+        //     // handle success
+        //     console.log(response);
+        // })
+        // .catch(function (response) {
+        //     // handle error
+        //     console.log(response);
+        // });
     }
 
     static deleteRequest(endPoint, id) {

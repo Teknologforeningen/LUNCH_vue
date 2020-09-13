@@ -25,7 +25,7 @@ export default {
         try {
             this.newsArr = await RequestService.getDataRequest('posts');
             this.newsArr.sort((a, b) => b.date - a.date)
-            console.log(this.newsArr)
+            // console.log(this.newsArr)
         } catch(err) {
             console.log(err);
         }

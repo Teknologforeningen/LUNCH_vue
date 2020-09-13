@@ -70,13 +70,13 @@
 		}
 	},
     async created() {
-			try {
-				this.newsArr = await RequestService.getRequest('posts');
-				this.newsArr.sort((a, b) => b.date - a.date)
-				//console.log(this.newsArr)
-			} catch(err) {
-				console.log(err);
-			}
+		try {
+			this.newsArr = await RequestService.getRequest('posts');
+			this.newsArr.sort((a, b) => b.date - a.date)
+			//console.log(this.newsArr)
+		} catch(err) {
+			console.log(err);
+		}
     },
     methods: {
 		async onSubmit(evt) {
@@ -135,8 +135,13 @@
 
 		async hideItem(item) {
 			item.visible = false;
-			const text = JSON.stringify(item);
-			await RequestService.sendRequest('posts', text);
+			const temp = ({
+				title: item.title,
+				content: item.content,
+				visible: item.visible
+			});
+			const text = JSON.stringify(temp);
+			await RequestService.sendRequest('posts/' + item._id, text);
 			this.newsArr.map(items => {
 				if (items._id == item._id) {
 					items.visible = item.visible;
@@ -146,8 +151,13 @@
 
 		async showItem(item) {
 			item.visible = true;
-			const text = JSON.stringify(item);
-			await RequestService.sendRequest('posts', text);
+			const temp = ({
+				title: item.title,
+				content: item.content,
+				visible: item.visible,
+			});
+			const text = JSON.stringify(temp);
+			await RequestService.sendRequest('posts/' + item._id, text);
 			this.newsArr.map(items => {
 				if (items._id == item._id) {
 					items.visible = item.visible;
