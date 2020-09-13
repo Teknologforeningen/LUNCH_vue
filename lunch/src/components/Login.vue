@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<b-form class="login-container" @submit="login">
+		<b-form class="login-container" @submit.prevent="login">
 			<b-form-group id="usernameGroup" label="Username:" label-for="usernameInput">
 				<b-form-input id="usernameInput" v-model="user.username" type="text" required placeholder="Enter Username">
 				</b-form-input>
@@ -37,6 +37,7 @@ export default {
 			axios.post('http://localhost:5000/login', user)
 				.then(res => {
 					localStorage.setItem('token', res.data.token);
+					this.$router.go();
 				}).catch(error => {
 					console.log(error.response);
 				});
