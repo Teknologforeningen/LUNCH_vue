@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
 // Models
 const User = require('../models/User');
 
-
 mongoose.connect('mongodb://localhost/lunch');
 
 mongoose.connection.once('open', () => {
@@ -56,11 +55,13 @@ const posts = require('./routes/api/posts');
 const hours = require('./routes/api/hours');
 const prices = require('./routes/api/prices');
 const messages = require('./routes/api/messages');
+const menu = require('./routes/api/menu');
 
 app.use('/api/posts', posts);
 app.use('/api/hours', hours);
 app.use('/api/prices', prices);
 app.use('/api/messages', messages);
+app.use('/api/menu', menu);
 
 const port = process.env.PORT || 5000;
 
