@@ -34,14 +34,7 @@ router.get('/images/:id', (req, res) => {
 });
 
 router.post('/', upload.single('image'), (req, res) => {
-    const img = fs.readFileSync(req.file.path);
-    const encodeImage = img.toString('base64');
-    const post = {
-        title: req.body.title,
-        content: req.body.content,
-        contentType: req.file.mimetype,
-        image: new Buffer.alloc(req.file.size, encodeImage, 'base64')
-    };
+    const post = JSON.parse(req.body.text);
     Post.findOne({ _id:post._id }, (err, result) => {
         if (err) {
             return res.status(500).json({
@@ -49,22 +42,21 @@ router.post('/', upload.single('image'), (req, res) => {
                 error: err
             });
         } else if (result) {
-            console.log("exists");
+            // console.log("exists");
             result.title = post.title;
             result.content = post.content;
             result.visible = post.visible;
-            result.contentType = post.contentType;
-            result.image = post.image;
             result.save();
         } else {
-            console.log("does not exist")
-            const newPost = new Post({
-                title: post.title,
-                content: post.content,
-                contentType: post.contentType,
-                image: post.image
-            });
-            
+            // console.log("does not exist");
+            const img = fs.readFileSync(req.file.path);
+            const encodeImage = img.toString('base64');
+            const newPost = {
+                title: req.body.title,
+                content: req.body.content,
+                contentType: req.file.mimetype,
+                image: new Buffer.alloc(req.file.size, encodeImage, 'base64')
+            };
             newPost.save(err => {
                 if (err) {
                     return res.status(500).json({
