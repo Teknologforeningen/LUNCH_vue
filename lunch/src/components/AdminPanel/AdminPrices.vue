@@ -3,9 +3,9 @@
 		<h2>Prices:</h2>
 		<b-table striped hover :fields="fields" :items="prices">
 			<template v-slot:cell(priceNormal)="data">
-        {{ data.value }}
+				{{ data.value }}
 				<b-icon-trash class="icon-delete" icon="trash" @click="showDeleteModal(data.item)"></b-icon-trash>
-      </template>
+			</template>
 		</b-table>
 		<b-button class="add-button" variant="primary" @click="openModal">Add price</b-button>
 		<b-modal id="add-price-modal" title="Add Post" hide-footer>
@@ -65,25 +65,25 @@
     name: 'AdminPrices',
     components: {
         BIconTrash
-		},
-		data() {
-			return {
-				prices: [],
-				fields: ['description', 'priceStudent', 'priceNormal'],
-				addPrice: {
-					description: '',
-					priceStudent: undefined,
-					priceNormal: undefined
-				}
+	},
+	data() {
+		return {
+			prices: [],
+			fields: ['description', 'priceStudent', 'priceNormal'],
+			addPrice: {
+				description: '',
+				priceStudent: undefined,
+				priceNormal: undefined
 			}
-		},
-		async created() {
-			try {
-				this.prices = await RequestService.getRequest('prices');
-				console.log(this.prices);
-			} catch(err) {
-				console.log(err);
-			}
+		}
+	},
+	async created() {
+		try {
+			this.prices = await RequestService.getRequest('prices');
+			console.log(this.prices);
+		} catch(err) {
+			console.log(err);
+		}
     },
     methods: {
 			async onSubmit(evt) {
