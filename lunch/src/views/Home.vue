@@ -11,6 +11,17 @@
     </div>
     <div class="app-content-right"></div>
     <div class="footer">
+      <div class="footer-container">
+        <h5 class="footer-title">Contact information</h5>
+        <p class="footer-text">
+          Teknologföreningen
+          <br>Otsvängen 22
+          <br>02150 ESBO
+        </p>
+        <p class="footer-text">
+          Contact: ekonomichef[at]teknolog.fi
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -59,11 +70,32 @@ export default {
 
   .footer {
     width: 100%;
-    min-height: 200px;
     background-color: #F4F4F4;
   }
 
-  @media (max-width: 1085px) {
+  .footer-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    margin: 0 auto;
+    padding: 1rem;
+    width: 580px;
+    height: 100%;
+  }
+
+  .footer-title {
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 665px) {
+    .footer-container {
+      widows: 100%;
+    }
+  }
+
+  @media (max-width: 1185px) {
     .app-content-right,
     .app-content-left  {
       display: none;

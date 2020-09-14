@@ -34,5 +34,6 @@ export default {
 	.hours-text {
 		text-align: left;
 		margin: 8px 0;
+		font-weight: bold;
 	}
 </style>
