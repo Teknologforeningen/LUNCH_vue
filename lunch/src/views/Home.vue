@@ -91,7 +91,7 @@ export default {
 
   @media (max-width: 665px) {
     .footer-container {
-      widows: 100%;
+      width: 100%;
     }
   }
 
