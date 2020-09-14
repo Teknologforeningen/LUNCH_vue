@@ -8,6 +8,7 @@
       <Announcement />
       <OpeningHours />
       <NewsList />
+      <Prices />
     </div>
     <div class="app-content-right"></div>
     <div class="footer">
@@ -31,11 +32,12 @@ import NewsList from '../components/NewsList'
 import OpeningHours from '../components/OpeningHours'
 import LunchMenu from '../components/LunchMenu'
 import Announcement from '../components/Announcement'
+import Prices from '../components/Prices'
 
 export default {
   name: 'App',
   components: {
-    LunchMenu, Announcement, NewsList, OpeningHours
+    LunchMenu, Announcement, OpeningHours, NewsList, Prices
   }
 }
 </script>
