@@ -1,0 +1,5 @@
+- hosts: dvalin.tf.fi
+  become: yes
+  tasks:
+    - name: Include deploy tasks
+      include_tasks: tasks/deploy_testing.yml
