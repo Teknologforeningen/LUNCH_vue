@@ -1,0 +1,27 @@
+# Builds site locally and rsyncs to server
+- name: Specify git dir
+  set_fact:
+    git_dir: "{{ playbook_dir }}/lunch"
+    url: lunch.dvalin.tf.fi
+
+- name: Install npm packages
+  delegate_to: localhost
+  become: no
+  npm:
+    path: "{{ git_dir }}/lunch"
+    state: present
+
+- name: Run npm run build
+  delegate_to: localhost
+  become: no
+  command:
+    argv:
+      - npm
+      - run
+      - build
+    chdir: "{{ git_dir }}/lunch"
+
+- name: Copy build dist
+  ansible.posix.synchronize:
+    src: "{{ git_dir }}/dist/"
+    dest: /srv/lunch-frontend/

@@ -10,3 +10,29 @@
     name: nginx
     state: present
     system: yes
+
+- name: Template nginx config
+  template:
+    src: lunch_nginx.conf.j2
+    dest: /etc/nginx/sites-available/lunch
+    mode: '0644'
+
+- name: Link nginx config
+  file:
+    src: /etc/nginx/sites-available/lunch
+    path: /etc/nginx/sites-enabled/lunch
+    state: link
+
+- name: Chown dir
+  file:
+    path: /srv/lunch-frontend
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: '0755'
+    recurse: yes
+
+- name: Restart nginx
+  service:
+    name: nginx
+    state: restarted
