@@ -5,7 +5,7 @@ server {
   listen       80;
   server_name  lunch.dvalin.tf.fi;
   location / {
-    root   {{ git_dir }}/lunch/dist;
+    root   /srv/lunch-frontend;
     index  index.html;
     try_files $uri $uri/ /index.html;
   }

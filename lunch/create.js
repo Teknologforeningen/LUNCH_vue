@@ -78,3 +78,5 @@ newMessage.save(err => {
         console.log('Message saved successfully');
     }
 });
+
+process.exitCode = 0;
