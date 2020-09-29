@@ -3,12 +3,12 @@
     git_dir: /srv/lunch
     url: lunch.dvalin.tf.fi
 
-- name: Chown dir
-  file:
-    path: "/srv"
-    state: directory
-    owner: nginx
-    recurse: yes
+- name: Clone repo
+  git:
+    repo: https://github.com/Teknologforeningen/LUNCH.git
+    dest: "{{ git_dir }}"
+    force: yes
+    version: HEAD
 
 - name: Install apt packages
   package:
@@ -18,11 +18,6 @@
       - nginx
       - mongodb
     state: present
-
-- name: Create nginx user
-  user:
-    name: nginx
-    shell: /bin/false
 
 - name: Template nginx config
   template:
@@ -36,18 +31,27 @@
     path: /etc/nginx/sites-enabled/lunch
     state: link
 
-- name: Clone repo
-  git:
-    repo: https://github.com/Teknologforeningen/LUNCH.git
-    dest: "{{ git_dir }}"
-    version: HEAD
-
 - name: Install npm packages
-  become: yes
   npm:
-    ci: yes
-    production: yes
     path: "{{ git_dir }}/lunch"
+    state: present
+
+- name: Run npm run build
+  command:
+    argv:
+      - npm
+      - run
+      - build
+    chdir: "{{ git_dir }}/lunch"
+
+- name: Chown dir
+  file:
+    path: "/srv"
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: '0755'
+    recurse: yes
 
 - name: Restart nginx
   service:

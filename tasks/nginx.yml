@@ -1,0 +1,12 @@
+- name: Create nginx user
+  user:
+    name: nginx
+    group: nginx
+    shell: /bin/false
+    system: yes
+
+- name: Create nginx group
+  group:
+    name: nginx
+    state: present
+    system: yes

@@ -1,5 +1,9 @@
 - hosts: dvalin.tf.fi
   become: yes
   tasks:
+    - name: Include nginx user conf
+      include_tasks: tasks/nginx.yml
+
     - name: Include deploy tasks
       include_tasks: tasks/deploy_testing.yml
+
