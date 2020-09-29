@@ -1,4 +1,7 @@
 server {
+  access_log /var/log/nginx/lunch-access.log;
+  error_log /var/log/nginx/lunch-error.log warn;
+
   listen       80;
   server_name  lunch.dvalin.tf.fi;
   location / {
