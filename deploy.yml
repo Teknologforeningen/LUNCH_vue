@@ -4,6 +4,9 @@
     - name: Include nginx user conf
       include_tasks: tasks/nginx.yml
 
+    - name: Include backend tasks
+      include_tasks: tasks/backend.yml
+
     - name: Include deploy tasks
       include_tasks: tasks/deploy_testing.yml
 

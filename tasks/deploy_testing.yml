@@ -1,14 +1,14 @@
 - name: Specify git dir
   set_fact:
-    git_dir: /srv/lunch
+    git_dir: "{{ playbook_dir }}/lunch"
     url: lunch.dvalin.tf.fi
 
-- name: Clone repo
-  git:
-    repo: https://github.com/Teknologforeningen/LUNCH.git
-    dest: "{{ git_dir }}"
-    force: yes
-    version: HEAD
+    #- name: Clone repo
+    #  git:
+    #    repo: https://github.com/Teknologforeningen/LUNCH.git
+    #    dest: "{{ git_dir }}"
+    #    force: yes
+    #    version: HEAD
 
 - name: Install apt packages
   package:
@@ -32,11 +32,15 @@
     state: link
 
 - name: Install npm packages
+  delegate_to: localhost
+  become: no
   npm:
     path: "{{ git_dir }}/lunch"
     state: present
 
 - name: Run npm run build
+  delegate_to: localhost
+  become: no
   command:
     argv:
       - npm
@@ -46,12 +50,18 @@
 
 - name: Chown dir
   file:
-    path: "/srv"
+    path: /srv/lunch-frontend
     state: directory
     owner: nginx
     group: nginx
     mode: '0755'
     recurse: yes
+
+- name: Copy build dist
+  ansible.posix.synchronize:
+    src: "{{ git_dir }}/dist/"
+    dest: /srv/lunch-frontend/
+
 
 - name: Restart nginx
   service:

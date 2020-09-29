@@ -1,0 +1,11 @@
+- name: Copy systemd unit
+  copy:
+    src: lunch-backend.service
+    dest: /etc/systemd/system/
+  register: unit
+
+- name: Start systemd unit
+  systemd:
+    name: lunch-backend.service
+    daemon_reload: yes
+    state: started
