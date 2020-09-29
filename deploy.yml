@@ -1,12 +1,14 @@
 - hosts: dvalin.tf.fi
   become: yes
   tasks:
-    - name: Include nginx user conf
-      include_tasks: tasks/nginx.yml
+    - name: Install dependencies
+      include_tasks: tasks/deps.yml
+    
+    - name: Build locally and rsync to server
+      include_tasks: tasks/build.yml
 
-    - name: Include backend tasks
+    - name: Configure running backend
       include_tasks: tasks/backend.yml
 
-    - name: Include deploy tasks
-      include_tasks: tasks/deploy_testing.yml
-
+    - name: Configure nginx
+      include_tasks: tasks/nginx.yml
