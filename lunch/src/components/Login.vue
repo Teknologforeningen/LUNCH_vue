@@ -34,7 +34,7 @@ export default {
 				username: this.user.username,
 				password: this.user.password
 			}
-			axios.post('http://dvalin.tf.fi:5000/login', user)
+			axios.post('http://localhost:5000/login', user)
 				.then(res => {
 					localStorage.setItem('token', res.data.token);
 					this.$router.go();
