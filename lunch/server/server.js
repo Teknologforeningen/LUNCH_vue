@@ -33,39 +33,29 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-var ldapConfig = {
-	ldapOpts: { 
-		url: config.ldap.url, 
-		tlsOptions: { rejectUnauthorized: false },
-		//Milliseconds client should let operations live for before timing out
-		timeout: 5000,
-		//Milliseconds client should wait before timing out on TCP connections
-		connectTimeout: 5000
-	},
-	adminDn: config.ldap.adminDn, 
-	adminPassword: config.ldap.adminPassword, 
-	userSearchBase: `${config.ldap.userOU},${config.ldap.baseDn}`,
-	baseDn: config.ldap.baseDn,
-	adminGroups: config.ldap.adminGroups,
-	groupSearchBase: `${config.ldap.groupOU},${config.ldap.baseDn}`,
-	userSearchBase: `${config.ldap.userOU},${config.ldap.baseDn}`
+const ldapConnOpts = { 
+	url: config.ldap.url, 
+	tlsOptions: { rejectUnauthorized: false },
+	//Milliseconds client should let operations live for before timing out
+	timeout: 5000,
+	//Milliseconds client should wait before timing out on TCP connections
+	connectTimeout: 5000
 };
 
 async function ldapAuth(username, password) {
-	console.log(ldapConfig);
 	console.log(`Trying to authenticate LDAP user '${username}'.`);
 
 	try {
-		let authenticated_user = await authenticate({
-			ldapOpts: {
-				url: config.ldap.url,
-				tlsOptions: { rejectUnauthorized: false }
-			},
+		let userAuth = {
+			ldapOpts: ldapConnOpts,
+			adminDn: config.ldap.adminDn,
+			adminPassword: config.ldap.adminPassword, 
 			userPassword: password,
-			userSearchBase: ldapConfig.userSearchBase,
+			userSearchBase: `${config.ldap.userOU},${config.ldap.baseDn}`,
 			usernameAttribute: 'uid',
-			userDn: `uid=${username}${ldapConfig.userSearchBase}`
-		});
+			username: username
+		}
+		let authenticated_user = await authenticate(userAuth);
 		console.log(`User '${authenticated_user.cn}' authenticated successfully!`);
 		return authenticated_user;
 	} catch (e) {
@@ -76,12 +66,12 @@ async function ldapAuth(username, password) {
 
 async function isMemberOf(groups, user) {
 	//Creates a new LDAP client
-	var client = new ldap(ldapConfig.ldapOpts);
+	var client = new ldap(ldapConnOpts);
 	try {
 		//Binds to the LDAP server (i.e. "logs in") using bind DN and password
-		await client.bind(ldapConfig.adminDn, ldapConfig.adminPassword);
+		await client.bind(config.ldap.adminDn, config.ldap.adminPassword);
 	} catch (e) {
-		console.log(e);
+		console.log("LDAP bind failed!");
 		return e;
 	}
 	//Creates the string '(|(cn=group1)(cn=group2)(cn=group3))'.
@@ -99,7 +89,7 @@ async function isMemberOf(groups, user) {
 	var isInAllowedGroup = false;
 	try {
 		//Searches the LDAP for groups using the searchOpts defined above.
-		const groupEntries = await client.search(ldapConfig.groupsSearchBase, searchOpts);
+		const groupEntries = await client.search(`${config.ldap.groupOU},${config.ldap.baseDn}`, searchOpts);
 		
 		//Loop through the found groups.
 		groupEntries.forEach(function (item, index) {
@@ -122,7 +112,7 @@ async function isMemberOf(groups, user) {
 app.post('/login', async (req, res) => {
 
 	let authenticated_user = await ldapAuth(req.body.username, req.body.password);
-	let isMemberOfGroup = await isMemberOf(ldapConfig.adminGroups, req.body.username);
+	let isMemberOfGroup = await isMemberOf(config.ldap.adminGroups, req.body.username);
 	
 	//Check if LDAP auth has returned an error.
 	if(authenticated_user instanceof Error) {
