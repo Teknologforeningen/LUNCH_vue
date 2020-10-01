@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const url = 'http://dvalin.tf.fi:5000/api/';
+const url = 'http://localhost:5000/api/';
 
 class RequestService {
     static getUrl() {
