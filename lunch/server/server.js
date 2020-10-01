@@ -5,16 +5,18 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { authenticate } = require('ldap-authentication')
-const ldap = require('ldapjs');
+const { authenticate } = require('ldap-authentication');
+//const ldap = require('ldapjs');
+const ldap = require('ldapjs-client');
 const assert = require('assert');
+var Promise = require('promise');
 
 // Models
 const User = require('../models/User');
 
 // Get configuration from file
 const config = require('./config');
-console.log("Read config from file:")
+console.log("Read config from file:");
 console.log(config);
 
 mongoose.connect('mongodb://localhost/lunch');
@@ -31,7 +33,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 
-const ldapConfig = {
+var ldapConfig = {
 	ldapOpts: { 
 		url: config.ldap.url, 
 		tlsOptions: { rejectUnauthorized: false },
@@ -43,133 +45,112 @@ const ldapConfig = {
 	adminDn: config.ldap.adminDn, 
 	adminPassword: config.ldap.adminPassword, 
 	userSearchBase: `${config.ldap.userOU},${config.ldap.baseDn}`,
-	usernameAttribute: 'uid',
 	baseDn: config.ldap.baseDn,
 	adminGroups: config.ldap.adminGroups,
-	groupsSearchBase: config.ldap.groupOU.concat(',', config.ldap.baseDn),
-}
+	groupSearchBase: `${config.ldap.groupOU},${config.ldap.baseDn}`,
+	userSearchBase: `${config.ldap.userOU},${config.ldap.baseDn}`
+};
 
 async function ldapAuth(username, password) {
-
-	const ldapConfig = {
-		ldapOpts: { 
-			url: config.ldap.url, 
-			tlsOptions: { rejectUnauthorized: false },
-			//Milliseconds client should let operations live for before timing out
-			timeout: 5000,
-			//Milliseconds client should wait before timing out on TCP connections
-			connectTimeout: 5000
-		},
-		adminDn: config.ldap.adminDn, 
-		adminPassword: config.ldap.adminPassword, 
-		userDn: 'uid='.concat(username, config.ldap.userOU, ',', config.ldap.baseDn),
-		userPassword: password,
-		userSearchBase: config.ldap.userOU.concat(',', config.ldap.baseDn),
-		usernameAttribute: 'uid',
-		username: username,
-		groupsSearchBase: config.ldap.groupOU.concat(',', config.ldap.baseDn),
-		adminGroups: config.ldap.adminGroups,
-		groupClass: 'posixGroup',
-		baseDn: config.ldap.baseDn
-	}
-	console.log("Trying to authenticate LDAP user '".concat(username, "'"));
+	console.log(ldapConfig);
+	console.log(`Trying to authenticate LDAP user '${username}'.`);
 
 	try {
-		//TODO: Issues with async, this function is not synced so user logs in
-		//before groups are checked.
-		var allowed = await getLdapGroups(ldapConfig.adminGroups, username);
-		authenticated_user = await authenticate(ldapConfig);
-
+		let authenticated_user = await authenticate({
+			ldapOpts: {
+				url: config.ldap.url,
+				tlsOptions: { rejectUnauthorized: false }
+			},
+			userPassword: password,
+			userSearchBase: ldapConfig.userSearchBase,
+			usernameAttribute: 'uid',
+			userDn: `uid=${username}${ldapConfig.userSearchBase}`
+		});
 		console.log(`User '${authenticated_user.cn}' authenticated successfully!`);
-		console.log("Checking user group membership.")
-
-
-		if(allowed) {
-			console.log("User is in allowed group.");
-			return authenticated_user;
-		} else {
-			console.log("User not in allowed group!");
-			return "ERROR";
-		}
-
+		return authenticated_user;
 	} catch (e) {
 		console.log(e);
 		return e;
 	}
 }
 
-async function getLdapGroups(groups, user) {
-	return new Promise(function(resolve, reject) {
-		var client = ldap.createClient(ldapConfig.ldapOpts);
+async function isMemberOf(groups, user) {
+	//Creates a new LDAP client
+	var client = new ldap(ldapConfig.ldapOpts);
+	try {
+		//Binds to the LDAP server (i.e. "logs in") using bind DN and password
+		await client.bind(ldapConfig.adminDn, ldapConfig.adminPassword);
+	} catch (e) {
+		console.log(e);
+		return e;
+	}
+	//Creates the string '(|(cn=group1)(cn=group2)(cn=group3))'.
+	//This string is used as a filter to get the members of all
+	//groups (cn=group1 OR cn=group2 OR cn=group3).
+	const groupFilter = `(|(cn=${groups.join(')(cn=')}))`;
+	const searchOpts = {
+		filter: groupFilter,
+		scope: 'sub',
+		//Only return memberUids, we are not interested in other data.
+		attributes: ['memberUid']
+	};
 
-		client.bind(ldapConfig.adminDn, ldapConfig.adminPassword, function(err) {
-			assert.ifError(err);
+	//Default value.
+	var isInAllowedGroup = false;
+	try {
+		//Searches the LDAP for groups using the searchOpts defined above.
+		const groupEntries = await client.search(ldapConfig.groupsSearchBase, searchOpts);
+		
+		//Loop through the found groups.
+		groupEntries.forEach(function (item, index) {
+			//Checks if the users uid is in the group.
+			if(item.memberUid.includes(user)) {
+				isInAllowedGroup = true;
+				console.log(`User '${user}' is a member of '${item.dn}'`);
+			}
+			else {
+				console.log(`User '${user}' is NOT a member of '${item.dn}'`);
+			}
 		});
-		//Creates the string '(|(cn=group1)(cn=group2)(cn=group3))'.
-		//This string is used as a filter to get the members of all
-		//groups given.
-		var groupFilter = `(|(cn=${groups.join(')(cn=')}))`
-		var searchOpts = {
-			filter: groupFilter,
-			scope: 'sub',
-			attributes: ['memberUid']
-		};
-
-		var isInAllowedGroup = false;
-		try {
-			client.search(`${ldapConfig.groupsSearchBase}`, searchOpts, function(err, res) {
-				assert.ifError(err);
-
-				res.on('searchEntry', function(entry) {
-					if(entry.object.memberUid.includes(user)) {
-						isInAllowedGroup = true;
-						console.log(`${user} found in group ${entry.object.dn}`);
-					} else {
-						console.log(`${user} not found in group ${entry.object.dn}`);
-					}
-				});
-				res.on('searchReference', function(referral) {
-					console.log('referral: ' + referral.uris.join());
-				});
-				res.on('error', function(err) {
-					console.error('error: ' + err.message);
-				});
-				res.on('end', function(result) {
-					console.log('status: ' + result.status);
-					console.log('Unbinding from LDAP server.')
-					client.unbind(function(err) {
-						assert.ifError(err);
-					});
-				});	
-			});
-		} catch(e) {
-			console.log(e);
-			return e;
-		}
-		resolve(isInAllowedGroup);
-	})
+	} catch(e) {
+		console.log(e);
+	}
+	console.log(`User '${user}' is in one of the allowed groups: ${isInAllowedGroup}`)
+	return isInAllowedGroup;
 }
 
 app.post('/login', async (req, res) => {
 
 	let authenticated_user = await ldapAuth(req.body.username, req.body.password);
-
-	//TODO: Fix async issue
-	if(authenticated_user == "ERROR") {
-		console.log("?????")
-	} else if(authenticated_user instanceof Error) {
+	let isMemberOfGroup = await isMemberOf(ldapConfig.adminGroups, req.body.username);
+	
+	//Check if LDAP auth has returned an error.
+	if(authenticated_user instanceof Error) {
 		console.log("LDAP auth error: ".concat(authenticated_user.message));
 		
-		//TODO: Make this actually do something
+		//TODO: Make returning errors do something.
 		return res.status(401).json({
 			title: 'authentication failed',
 			error: authenticated_user.message
 		});
-	} else {
+	//Check if group lookup has returned an error.
+	} else if(isMemberOfGroup instanceof Error) {
+		return res.status(401).json({
+			title: 'group lookup failed',
+			error: isMemberOfGroup.message
+		});
+	//Check if user is member of at least one group listed in the config.
+	} else if(isMemberOfGroup == true) {
 		let token = jwt.sign({ userId: authenticated_user._id }, 'secretkey');
 		return res.status(200).json({
 			title: 'login success',
 			token: token
+		});
+	//If user is not member of any of the groups, return error.
+	} else {
+		return res.status(401).json({
+			title: 'authentication failed',
+			error: 'user not in correct group' 
 		});
 	}
 });
