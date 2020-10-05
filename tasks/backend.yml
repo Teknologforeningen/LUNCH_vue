@@ -4,6 +4,15 @@
     dest: /etc/systemd/system/
   register: unit
 
+- name: Copy backend config file
+  copy:
+    remote_src: yes
+    src: /etc/lunch-ldap-config.js
+    dest: /srv/lunch/lunch/server/config.js
+    mode: '0750'
+    owner: nginx
+    group: nginx 
+
 - name: Start systemd unit
   systemd:
     name: lunch-backend.service
