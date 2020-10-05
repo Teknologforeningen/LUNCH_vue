@@ -1,19 +1,25 @@
 # Builds site locally and rsyncs to server
 - name: Specify git dir
   set_fact:
-    git_dir: "{{ playbook_dir }}/lunch"
-    url: lunch.dvalin.tf.fi
+    git_dir: "/srv/lunch"
+    server_url: "http://lunch.dvalin.tf.fi"
 
 - name: Install npm packages
-  delegate_to: localhost
-  become: no
   npm:
     path: "{{ git_dir }}/lunch"
     state: present
 
+- name: Template files containing server url
+  template:
+    src: src_components_Login.vue.j2
+    dest: "{{ git_dir }}/lunch/src/components/Login.vue"
+
+- name: Template files containing server url
+  template:
+    src: src_RequestService.js.j2
+    dest: "{{ git_dir }}/lunch/src/RequestService.js"
+
 - name: Run npm run build
-  delegate_to: localhost
-  become: no
   command:
     argv:
       - npm
@@ -22,6 +28,8 @@
     chdir: "{{ git_dir }}/lunch"
 
 - name: Copy build dist
-  ansible.posix.synchronize:
-    src: "{{ git_dir }}/dist/"
+  copy:
+    remote_src: yes
+    mode: preserve
+    src: "{{ git_dir }}/lunch/dist/"
     dest: /srv/lunch-frontend/
