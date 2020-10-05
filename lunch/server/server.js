@@ -70,6 +70,7 @@ async function isMemberOf(groups, user) {
 	try {
 		//Binds to the LDAP server (i.e. "logs in") using bind DN and password
 		await client.bind(config.ldap.adminDn, config.ldap.adminPassword);
+		console.log("LDAP bind successful.");
 	} catch (e) {
 		console.log("LDAP bind failed!");
 		return e;
