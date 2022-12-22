@@ -17,7 +17,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "jquery": "^1.9.1",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "ldap-authentication": "^2.2.4",
     "ldapjs-client": "^0.1.1",
     "mongoose": "^5.9.16",
